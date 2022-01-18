@@ -1,0 +1,22 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Values.appname }}-ingress
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+    {{- if  (eq .Values.env "prd") }}
+    - host: tutorial.{{ .Values.ingress.dns }}
+    {{- else }}
+    - host: tutorial-{{ .Values.env }}.{{ .Values.ingress.dns }}
+    {{- end }}
+      http:
+        paths:
+          - backend:
+              serviceName: {{ .Values.appname }}-service
+              servicePort: http
+            path: /
+{{- end }}

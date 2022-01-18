@@ -1,0 +1,59 @@
+name: DEV - Tutorial Frontend Deploy
+
+on:
+  repository_dispatch:
+    types: [tutorial-frontend-cd-dev]
+  workflow_dispatch:
+    inputs:
+      env:
+        description: Environment
+        required: true
+        default: 'dev'
+
+env:
+  ENVIRONMENT: dev
+  CLUSTER_NAME: aks-tutorial-az-asse-001
+  CLUSTER_RESOURCE_GROUP: rg-tutorial-cicd-lab
+  NAMESPACE_PREFIX: tutorial
+  PROJECT_NAME: tutorial
+  MICROSERVICE_NAME: tutorial-frontend
+  TAG: '0.0.1-SNAPSHOT'
+
+jobs:
+  deploy-microservice:
+    name: Deploy Microservice
+    runs-on: [self-hosted, example-dev]
+    environment:
+      name: dev
+      url: http://dev-example.appgw.cf/node-express/books
+
+    steps:
+      - name: Checkout pipelines
+        uses: actions/checkout@v2
+
+      - name: List working directory
+        run: ls
+
+      - name: Login via Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }}
+          allow-no-subscriptions: true
+
+      - name: Set Kubernetes Context
+        uses: azure/aks-set-context@v1
+        with:
+          creds: '${{ secrets.AZURE_RBAC_CREDENTIALS }}'
+          cluster-name: ${{ env.CLUSTER_NAME }}
+          resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
+
+      - name: 'Build Deployment Template'
+        run: |
+          helm template ./helm/appemplate --values helm/aistemplate/${{ env.PROJECT_NAME }}/${{ env.MICROSERVICE_NAME }}.yaml --set deploymentEnvironment=${{ env.ENVIRONMENT }} --set imageVersion=${{ env.TAG }} --set buildNumber=${{ github.run_number }} --output-dir helm/output
+      - name: 'Deploy'
+        run: |
+          export KUBERNETES_NAMESPACE=${{ env.NAMESPACE_PREFIX }}-${{ env.ENVIRONMENT }}
+          kubectl apply -f helm/output/aistemplate/templates/deployment.yaml -n ${KUBERNETES_NAMESPACE}
+          kubectl apply -f helm/output/aistemplate/templates/service.yaml -n ${KUBERNETES_NAMESPACE}
+          kubectl apply -f helm/output/aistemplate/templates/destinationrule.yaml -n ${KUBERNETES_NAMESPACE}
+          kubectl rollout status deployment ${{ env.MICROSERVICE_NAME }} -n ${KUBERNETES_NAMESPACE}

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.appname }}-service
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - port: {{ .Values.service.port}}
+      protocol: TCP
+      targetPort: {{ .Values.service.port}}
+      name: http
+  selector:
+    app: tutorial-app
+  type: {{ .Values.service.type }}

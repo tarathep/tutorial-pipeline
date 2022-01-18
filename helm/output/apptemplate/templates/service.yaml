@@ -1,0 +1,16 @@
+---
+# Source: apptemplate/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: <app-name>-service
+  namespace: prd
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+      name: http
+  selector:
+    app: tutorial-app
+  type: ClusterIP

@@ -1,0 +1,44 @@
+name: Common Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: Environment
+        required: true
+        default: 'dev'
+
+env:
+  CLUSTER_NAME: aks-tutorial-az-asse-001
+  CLUSTER_RESOURCE_GROUP: rg-tutorial-cicd-lab
+  PROJECT_NAME: tutorial
+
+jobs:
+  deploy-common:
+    name: Deploy Common
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.env }}
+    steps:
+      - name: Checkout pipelines
+        uses: actions/checkout@v2
+
+      - name: List working directory
+        run: ls
+
+      - name: Login via Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }}
+          allow-no-subscriptions: true
+
+      - name: Set Kubernetes Context
+        uses: azure/aks-set-context@v1
+        with:
+          creds: '${{ secrets.AZURE_RBAC_CREDENTIALS }}'
+          cluster-name: ${{ env.CLUSTER_NAME }}
+          resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
+
+      - name: 'Build Template and Deploy'
+        run: |
+          helm template ./helm/apptemplate --namespace ${{ env.PROJECT_NAME }}-${{ github.event.inputs.env }} --set env=${{ github.event.inputs.env }} --output-dir helm/output
+          kubectl apply -f helm/output/apptemplate/templates/namespace.yaml

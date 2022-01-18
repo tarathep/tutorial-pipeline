@@ -1,0 +1,28 @@
+
+appname: <app-name>
+
+env: <env>
+
+replicaCount: 1
+
+image:
+  name: <image-name>
+  tag: <tag>
+
+envVar:
+  name: "name"
+  value: "value"
+  name2: "name2"
+  value2: "value2"
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  dns: <your-dns-zone-name>
+
+buildNumber: 0
+
+# These values are the default values if you don't pass a new value as a parameter by using the --set option of the Helm CLI.

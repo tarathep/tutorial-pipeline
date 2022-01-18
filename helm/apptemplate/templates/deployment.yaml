@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appname }}-deploy
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: tutorial-app
+  template:
+    metadata:
+      labels:
+        app: tutorial-app
+    spec:
+      containers:
+        - image: {{ .Values.image.name }}:{{ default "latest" .Values.image.tag }}
+          name: {{ .Values.appname }}-pod
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          ports:
+            - containerPort: {{ .Values.service.port }}
+              name: http
+          env:
+            - name: BUILD_NUMBER
+              value: "{{ .Values.buildNumber }}"
+            - name: "{{ .Values.envVar.name }}"
+              value: "{{ .Values.envVar.value }}"
+            - name: "{{ .Values.envVar.name2 }}"
+              value: "{{ .Values.envVar.value2 }}"
+          
+
+            
+
+
