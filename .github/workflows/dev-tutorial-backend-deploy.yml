@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: dev
-      url: http://api-tutorial-dev.584d9c19d32846c3b161.southeastasia.aksapp.io
+      url: http://api-tutorial-dev.584d9c19d32846c3b161.southeastasia.aksapp.io/api/tutorials
 
     steps:
       - name: Checkout pipelines
