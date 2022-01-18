@@ -1,0 +1,64 @@
+name: UAT - Tutorial Frontend Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Repository branch or tag
+        required: true
+        default: '0.0.1'
+
+env:
+  ENVIRONMENT: uat
+  CLUSTER_NAME: aks-tutorial-az-asse-001
+  CLUSTER_RESOURCE_GROUP: rg-tutorial-cicd-lab
+  NAMESPACE_PREFIX: tutorial
+  PROJECT_NAME: tutorial
+  MICROSERVICE_NAME: tutorial-frontend
+  TAG: ${{ github.event.inputs.ref }}
+  VUE_APP_ENPOINT_API_BACKEND: 'http://20.197.96.171:8089/api/'
+
+jobs:
+  deploy-microservice:
+    name: Deploy Microservice
+    runs-on: ubuntu-latest
+    environment:
+      name: uat
+      url: http://tutorial-uat.584d9c19d32846c3b161.southeastasia.aksapp.io
+
+    steps:
+      - name: Checkout pipelines
+        uses: actions/checkout@v2
+
+      - name: List working directory
+        run: ls
+
+      - name: Login via Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }}
+          allow-no-subscriptions: true
+
+      - name: Set Kubernetes Context
+        uses: azure/aks-set-context@v1
+        with:
+          creds: '${{ secrets.AZURE_RBAC_CREDENTIALS }}'
+          cluster-name: ${{ env.CLUSTER_NAME }}
+          resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
+
+      - name: 'Build Deployment Template'
+        run: |
+          helm template ./helm/apptemplate \
+          --values helm/apptemplate/${{ env.PROJECT_NAME }}/${{ env.MICROSERVICE_NAME }}.yaml \
+          --namespace ${{ env.NAMESPACE_PREFIX }}-${{ env.ENVIRONMENT }} \
+          --set env=${{ env.ENVIRONMENT }} \
+          --set image.tag=${{ env.TAG }} \
+          --set envVar.value=${{ env.VUE_APP_ENPOINT_API_BACKEND }} \
+          --output-dir helm/output
+     
+      - name: 'Deploy'
+        run: |
+          export KUBERNETES_NAMESPACE=${{ env.NAMESPACE_PREFIX }}-${{ env.ENVIRONMENT }}
+          kubectl apply -f helm/output/apptemplate/templates/deployment.yaml -n ${KUBERNETES_NAMESPACE}
+          kubectl apply -f helm/output/apptemplate/templates/service.yaml -n ${KUBERNETES_NAMESPACE}
+          kubectl apply -f helm/output/apptemplate/templates/ingress.yaml -n ${KUBERNETES_NAMESPACE}
