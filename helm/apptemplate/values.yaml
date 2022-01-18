@@ -21,7 +21,7 @@ service:
   targetPort: 80
 
 ingress:
-  enabled: true
+  enabled: false
   dns: <your-dns-zone-name>
   subdomain:
 
