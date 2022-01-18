@@ -13,6 +13,7 @@ env:
   PROJECT_NAME: tutorial
   MICROSERVICE_NAME: tutorial-frontend
   TAG: '0.0.1-SNAPSHOT'
+  VUE_APP_ENPOINT_API_BACKEND: 'http://20.197.96.171:8089/api/'
 
 
 jobs:
@@ -51,6 +52,7 @@ jobs:
           --set env=${{ env.ENVIRONMENT }} \
           --set image.tag=${{ env.TAG }} \
           --set buildNumber=${{ github.run_number }} \
+          --set envVar.value=${{ env.VUE_APP_ENPOINT_API_BACKEND }} \
           --output-dir helm/output
      
       - name: 'Deploy'

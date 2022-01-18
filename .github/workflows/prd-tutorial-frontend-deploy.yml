@@ -1,29 +1,30 @@
-name: DEV - Tutorial Backend Deploy
+name: PRD - Tutorial Frontend Deploy
 
 on:
-  repository_dispatch:
-    types: [tutorial-backend-cd-dev]
   workflow_dispatch:
+    inputs:
+      ref:
+        description: Repository branch or tag
+        required: true
+        default: '0.0.1'
 
 env:
-  ENVIRONMENT: dev
+  ENVIRONMENT: prd
   CLUSTER_NAME: aks-tutorial-az-asse-001
   CLUSTER_RESOURCE_GROUP: rg-tutorial-cicd-lab
   NAMESPACE_PREFIX: tutorial
   PROJECT_NAME: tutorial
-  MICROSERVICE_NAME: tutorial-backend
-  TAG: '0.0.1-SNAPSHOT'
-  
-
-
+  MICROSERVICE_NAME: tutorial-frontend
+  TAG: ${{ github.event.inputs.ref }}
+  VUE_APP_ENPOINT_API_BACKEND: 'http://20.197.96.171:8089/api/'
 
 jobs:
   deploy-microservice:
     name: Deploy Microservice
     runs-on: ubuntu-latest
     environment:
-      name: dev
-      url: http://0.0.0.0:8089/api/tutorials
+      name: prd
+      url: http://tutorial.584d9c19d32846c3b161.southeastasia.aksapp.io
 
     steps:
       - name: Checkout pipelines
@@ -52,8 +53,7 @@ jobs:
           --namespace ${{ env.NAMESPACE_PREFIX }}-${{ env.ENVIRONMENT }} \
           --set env=${{ env.ENVIRONMENT }} \
           --set image.tag=${{ env.TAG }} \
-          --set buildNumber=${{ github.run_number }} \
-          --set envVar.value=${{ secrets.MONGODB_CONNECTION_STRING }} \
+          --set envVar.value=${{ env.VUE_APP_ENPOINT_API_BACKEND }} \
           --output-dir helm/output
      
       - name: 'Deploy'
@@ -61,3 +61,4 @@ jobs:
           export KUBERNETES_NAMESPACE=${{ env.NAMESPACE_PREFIX }}-${{ env.ENVIRONMENT }}
           kubectl apply -f helm/output/apptemplate/templates/deployment.yaml -n ${KUBERNETES_NAMESPACE}
           kubectl apply -f helm/output/apptemplate/templates/service.yaml -n ${KUBERNETES_NAMESPACE}
+          kubectl apply -f helm/output/apptemplate/templates/ingress.yaml -n ${KUBERNETES_NAMESPACE}

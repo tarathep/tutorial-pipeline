@@ -1,20 +1,22 @@
-name: DEV - Tutorial Backend Deploy
+name: PRD - Tutorial Backend Deploy
 
 on:
-  repository_dispatch:
-    types: [tutorial-backend-cd-dev]
   workflow_dispatch:
+    inputs:
+      ref:
+        description: Repository branch or tag
+        required: true
+        default: '0.0.1'
 
 env:
-  ENVIRONMENT: dev
+  ENVIRONMENT: prd
   CLUSTER_NAME: aks-tutorial-az-asse-001
   CLUSTER_RESOURCE_GROUP: rg-tutorial-cicd-lab
   NAMESPACE_PREFIX: tutorial
   PROJECT_NAME: tutorial
   MICROSERVICE_NAME: tutorial-backend
-  TAG: '0.0.1-SNAPSHOT'
+  TAG: ${{ github.event.inputs.ref }}
   
-
 
 
 jobs:
@@ -22,7 +24,7 @@ jobs:
     name: Deploy Microservice
     runs-on: ubuntu-latest
     environment:
-      name: dev
+      name: prd
       url: http://0.0.0.0:8089/api/tutorials
 
     steps:
@@ -52,7 +54,6 @@ jobs:
           --namespace ${{ env.NAMESPACE_PREFIX }}-${{ env.ENVIRONMENT }} \
           --set env=${{ env.ENVIRONMENT }} \
           --set image.tag=${{ env.TAG }} \
-          --set buildNumber=${{ github.run_number }} \
           --set envVar.value=${{ secrets.MONGODB_CONNECTION_STRING }} \
           --output-dir helm/output
      

@@ -7,7 +7,6 @@ image:
 
 envVar:
   name: "VUE_APP_ENPOINT_API_BACKEND"
-  value: "http://20.197.96.171:8089/api/"
 
 service:
   type: ClusterIP
