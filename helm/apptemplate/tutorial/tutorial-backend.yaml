@@ -1,6 +1,6 @@
 appname: tutorial-backend
 
-replicaCount: 1
+replicaCount: 2
 
 image:
   name: acrtutorialazasse001.azurecr.io/tutorial-backend
@@ -10,11 +10,6 @@ envVar:
   value: "mongodb://root:password@mongodb-service:27017"
 
 service:
-  type: ClusterIP
-  port: 80
+  type: LoadBalancer
+  port: 8090
   targetPort: 8089
-
-ingress:
-  enabled: true
-  dns: 584d9c19d32846c3b161.southeastasia.aksapp.io
-  subdomain: apis-tutorial
