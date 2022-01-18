@@ -7,7 +7,7 @@ image:
 
 envVar:
   name: "VUE_APP_ENPOINT_API_BACKEND"
-  value: "http://apis-tutorial-dev.584d9c19d32846c3b161.southeastasia.aksapp.io/api/"
+  value: "http://20.197.96.171:8089/api/"
 
 service:
   type: ClusterIP
