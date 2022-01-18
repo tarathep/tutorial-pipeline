@@ -11,5 +11,5 @@ envVar:
 
 service:
   type: LoadBalancer
-  port: 8090
+  port: 8089
   targetPort: 8089
