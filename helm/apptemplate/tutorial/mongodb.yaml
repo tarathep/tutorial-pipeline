@@ -1,0 +1,17 @@
+appname: tutorial-frontend
+
+replicaCount: 1
+
+image:
+  name: mongo
+
+envVar:
+  name: "MONGO_INITDB_ROOT_USERNAME"
+  name2: "MONGO_INITDB_ROOT_PASSWORD"
+
+service:
+  type: ClusterIP
+  port: 27017
+
+ingress:
+  enabled: false

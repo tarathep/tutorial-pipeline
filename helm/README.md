@@ -37,9 +37,8 @@ helm upgrade --install --create-namespace --atomic --wait --namespace tutorial-d
 ```
 genterate output yaml
 ```bash
-helm template ./helm/apptemplate --namespace tutorial-dev --set appname=db --set env=dev --set image.name=mongo --set image.tag=latest --set envVar.name=MONGO_INITDB_ROOT_USERNAME --set envVar.value=root --set envVar.name2=MONGO_INITDB_ROOT_PASSWORD --set envVar.value2=password --set service.port=27017 --set ingress.enabled=false --output-dir helm/output
+helm template ./helm/apptemplate --values helm/apptemplate/tutorial/mongodb.yaml --namespace tutorial-dev --set appname=db --set env=dev --set image.tag=latest --set envVar.value=root --set envVar.value2=password --output-dir helm/output
 ```
-
 
 ### STEP 2 DEPLOY BACKEND
 
@@ -60,7 +59,8 @@ helm template ./helm/apptemplate --namespace tutorial-dev --set appname=tutorial
 # GET IP BACKEND 
 > kubectl get svc -n <namespace>
 
-> helm upgrade --install --create-namespace --atomic --wait --namespace tutorial-dev tutorial-frontend . --set appname=tutorial-frontend --set env=dev --set image.name=acrtutorialazasse001.azurecr.io/tutorial-frontend --set image.tag=0.0.1-SNAPSHOT --set envVar.name=VUE_APP_ENPOINT_API_BACKEND --set envVar.value=http://20.43.159.232:8089/api/ --set service.port=80 --set ingress.enabled=true --set ingress.dns=584d9c19d32846c3b161.southeastasia.aksapp.io --set buildNumber=1
+deploy with helm
+> helm upgrade --install --create-namespace --atomic --wait --namespace tutorial-dev tutorial-frontend . --set appname=tutorial-frontend --set env=dev --set image.name=acrtutorialazasse001.azurecr.io/tutorial-frontend --set image.tag=0.0.1-SNAPSHOT --set envVar.name=VUE_APP_ENPOINT_API_BACKEND --set envVar.value=http://20.43.159.232:8089/api/ --set service.port=80 --set ingress.enabled=true --set ingress.dns=584d9c19d32846c3b161.southeastasia.aksapp.io --set subdomain=tutorial --set buildNumber=1
 ```
 
 genterate output yaml

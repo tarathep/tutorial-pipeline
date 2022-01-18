@@ -43,17 +43,13 @@ jobs:
       - name: 'Build Deployment Template'
         run: |
           helm template ./helm/apptemplate \
+          --values helm/apptemplate/${{ env.PROJECT_NAME }}/${{ env.MICROSERVICE_NAME }}.yaml \
           --namespace ${{ env.NAMESPACE_PREFIX }}-${{ env.ENVIRONMENT }} \
           --set appname=${{ env.MICROSERVICE_NAME }} \
           --set env=${{ env.ENVIRONMENT }} \
-          --set image.name=mongo \
           --set image.tag=${{ env.TAG }} \
-          --set envVar.name=MONGO_INITDB_ROOT_USERNAME \
           --set envVar.value=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} \
-          --set envVar.name2=MONGO_INITDB_ROOT_PASSWORD \
           --set envVar.value2=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} \
-          --set service.port=27017 \
-          --set ingress.enabled=false \
           --output-dir helm/output
      
       - name: 'Deploy'
