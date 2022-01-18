@@ -1,0 +1,19 @@
+appname: tutorial-frontend
+
+replicaCount: 1
+
+image:
+  name: acrtutorialazasse001.azurecr.io/tutorial-frontend
+
+envVar:
+  name: "VUE_APP_ENPOINT_API_BACKEND"
+  value: "http://20.43.159.232:8089/api/"
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  dns: 584d9c19d32846c3b161.southeastasia.aksapp.io
+  subdomain: tutorial

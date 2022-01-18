@@ -1,8 +1,8 @@
-name: DEV - Tutorial Frontend Deploy
+name: DEV - Tutorial Backend Deploy
 
 on:
   repository_dispatch:
-    types: [tutorial-frontend-cd-dev]
+    types: [tutorial-backend-cd-dev]
   workflow_dispatch:
 
 env:
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: dev
-      url: http://tutorial-dev.584d9c19d32846c3b161.southeastasia.aksapp.io
+      url: http://dev-example.appgw.cf/node-express/books
 
     steps:
       - name: Checkout pipelines
@@ -46,10 +46,16 @@ jobs:
       - name: 'Build Deployment Template'
         run: |
           helm template ./helm/apptemplate \
-          --values helm/apptemplate/${{ env.PROJECT_NAME }}/${{ env.MICROSERVICE_NAME }}.yaml \
           --namespace ${{ env.NAMESPACE_PREFIX }}-${{ env.ENVIRONMENT }} \
+          --set appname=${{ env.MICROSERVICE_NAME }} \
           --set env=${{ env.ENVIRONMENT }} \
+          --set image.name=acrtutorialazasse001.azurecr.io/${{ env.MICROSERVICE_NAME }} \
           --set image.tag=${{ env.TAG }} \
+          --set envVar.name=VUE_APP_ENPOINT_API_BACKEND \
+          --set envVar.value=http://20.43.159.232:8089/api/ \
+          --set service.port=80 \
+          --set ingress.enabled=true \
+          --set ingress.dns=584d9c19d32846c3b161.southeastasia.aksapp.io \
           --set buildNumber=${{ github.run_number }} \
           --output-dir helm/output
      

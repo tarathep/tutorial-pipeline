@@ -65,8 +65,9 @@ helm template ./helm/apptemplate --namespace tutorial-dev --set appname=tutorial
 
 genterate output yaml
 ```bash
-helm template ./helm/apptemplate --namespace tutorial-dev --set appname=tutorial-frontend --set env=dev --set image.name=acrtutorialazasse001.azurecr.io/tutorial-frontend --set image.tag=0.0.1-SNAPSHOT --set envVar.name=VUE_APP_ENPOINT_API_BACKEND --set envVar.value=http://20.43.159.232:8089/api/ --set service.port=80 --set ingress.enabled=true --set ingress.dns=584d9c19d32846c3b161.southeastasia.aksapp.io --set buildNumber=1 --output-dir helm/output
+helm template ./helm/apptemplate --values helm/apptemplate/tutorial/tutorial-frontend.yaml --namespace tutorial-dev --set env=dev --set image.tag=0.0.1-SNAPSHOT --set buildNumber=1 --output-dir helm/output
 ```
+
 
 ```bash
 kubectl apply -f helm/output/apptemplate/templates/deployment.yaml -n tutorial-dev
@@ -75,5 +76,7 @@ kubectl apply -f helm/output/apptemplate/templates/ingress.yaml -n tutorial-dev
 ```
 
 
+```bash
 kubectl apply -f helm/output/apptemplate/templates/namespace.yaml
 kubectl apply -f helm/output/apptemplate/templates/deployment.yaml -n dev
+```

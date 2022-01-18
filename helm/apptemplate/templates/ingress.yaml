@@ -9,9 +9,9 @@ metadata:
 spec:
   rules:
     {{- if  (eq .Values.env "prd") }}
-    - host: tutorial.{{ .Values.ingress.dns }}
+    - host: {{ .Values.ingress.subdomain }}.{{ .Values.ingress.dns }}
     {{- else }}
-    - host: tutorial-{{ .Values.env }}.{{ .Values.ingress.dns }}
+    - host: {{ .Values.ingress.subdomain }}-{{ .Values.env }}.{{ .Values.ingress.dns }}
     {{- end }}
       http:
         paths:
