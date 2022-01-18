@@ -16,7 +16,7 @@ env:
   PROJECT_NAME: tutorial
   MICROSERVICE_NAME: tutorial-frontend
   TAG: ${{ github.event.inputs.ref }}
-  VUE_APP_ENPOINT_API_BACKEND: 'http://20.197.96.171:8089/api/'
+  VUE_APP_ENPOINT_API_BACKEND: 'http://20.43.161.226:8089/api/'
 
 jobs:
   deploy-microservice:
