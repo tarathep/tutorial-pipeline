@@ -58,4 +58,3 @@ jobs:
           export KUBERNETES_NAMESPACE=${{ env.NAMESPACE_PREFIX }}-${{ env.ENVIRONMENT }}
           kubectl apply -f helm/output/apptemplate/templates/deployment.yaml -n ${KUBERNETES_NAMESPACE}
           kubectl apply -f helm/output/apptemplate/templates/service.yaml -n ${KUBERNETES_NAMESPACE}
-          kubectl apply -f helm/output/apptemplate/templates/ingress.yaml -n ${KUBERNETES_NAMESPACE}
