@@ -50,8 +50,7 @@ jobs:
 
       - name: 'Build Deployment Template'
         run: |
-          helm template ./helm/apptemplate \
-          --namespace ${{ env.NAMESPACE_PREFIX }}-${{ env.ENVIRONMENT }} \
+          helm template ./helm/apptemplate --namespace ${{ env.NAMESPACE_PREFIX }}-${{ env.ENVIRONMENT }} \
           --set appname=${{ env.MICROSERVICE_NAME }} \
           --set env=${{ env.ENVIRONMENT }} \
           --set image.name=acrtutorialazasse001.azurecr.io/${{ env.MICROSERVICE_NAME }} \
